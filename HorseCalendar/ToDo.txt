@@ -1,0 +1,23 @@
+﻿User Story
+As a user, I want to be able to see all upcoming horses I need to shoe so that I can plan my schedule accordingly.
+I want the application to have multiple pages, one as a main page that shows all upcoming horses, a "horse reset" menu, a master list that lists EVERY unique upcoming horse, 
+an add horse menu, and a remove horse menu, and a "view horse" menu that shows all the information about a specific horse.
+I want the main page to show the horse's name, and the date it needs to be shod by
+
+Acceptance Criteria
+- The main page should show all upcoming horses
+- The main page should show the horse's name and the date it needs to be shod by
+- The main page should have a keybind to go to the "horse reset" menu
+- The main page should have a keybind to go to the "master list" menu
+- The main page should have a keybind to go to the "add horse" menu
+- The main page should have a keybind to go to the "remove horse" menu
+- The main page should have a keybind to go to the "view horse" menu
+- The main page should have a keybind to go to the reset horse menu
+- The "horse reset" menu should have a keybind to go back to the main page
+- The "master list" menu should have a keybind to go back to the main page
+- The "add horse" menu should have a keybind to go back to the main page
+- The "remove horse" menu should have a keybind to go back to the main page
+- The "view horse" menu should have a keybind to go back to the main page
+- The "view horse" menu should show the horse's name, the date it needs to be shod by, the horse's owner, the horse's owner's phone number, the horse's owner's email, and the address of the horse
+- The "add horse" menu should have a keybind to go back to the main page
+- The "remove horse" menu should have a keybind to go back to the main page
