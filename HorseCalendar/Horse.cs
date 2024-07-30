@@ -4,25 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HorseCalendar
+namespace HorseCalendar;
+
+internal class Horse
 {
-    internal class Horse(string? name, uint roationInterval, int weekCount = 0)
+    public static uint _idCounter { get; private set; } = 0;
+    public uint ID { get; private set; }
+    public string? Name { get; set; }
+    public int WeeksSinceLastShoe => (int)((DateTime.Now - LastShoeDate).TotalDays / 7);
+    public int WeeksOverdue => Math.Max(0, WeeksSinceLastShoe - (int)RotationInterval);
+    public uint RotationInterval { get; set; }
+    public DateTime LastShoeDate { get; set; }
+
+    
+
+    public Horse(string? name, uint rotationInterval, DateTime lastShoeDate)
     {
-        public int Index { get; set; }
-        public string? Name { get; set; } = name;
-        public int WeekCount = weekCount;
-        public uint RoationInterval = roationInterval;
+        Name = name;
+        RotationInterval = rotationInterval;
+        LastShoeDate = lastShoeDate;
+        ID = ++_idCounter;
+        Update();
+    }
 
-        public void ResetToday()
-        {
-            WeekCount = 0;
-        }
+    public void Update()
+    {
 
-        public void ResetDate(DateTime date)
-        {
-            // TODO: Write reset to date formula
-            Console.WriteLine(DateTime.Now);
-            return;
-        }
+    }
+
+    /// <summary>
+    /// Resets the horse's last day it was shoed and weeks since last shoe
+    /// </summary>
+    /// <param name="date">The date to set the last date the horse was shod to</param>
+    public void Reset(DateTime date)
+    {
+        LastShoeDate = date;
+        Update();
     }
 }
