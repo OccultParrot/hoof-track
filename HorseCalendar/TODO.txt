@@ -1,0 +1,22 @@
+﻿Add functionality to use mulitple windows at the same time.. Maybe it possible to open it through program?
+Make it save horses to file every time a horse is added or removed or edited
+Make DueDateCalculator Work
+Add comfirmation to add or remove horse. Add console.writeline stating horse is added or removed
+Add owner prompt when adding horse (horseName, ownerName)
+Add search function
+Add unique ID to each horse that is saved
+Make menus work with IDs and names
+When promppted for horse id, automaticly open masterlist in new window
+Bug with custom date reset not working.
+Child programs for each barn?
+Bug with horse due date not working
+Abilty to by pass fields on edit horse
+Add ability to add horse to barn
+Add ability to remove horse from barn
+Masterlist should be seperate .exe file that can be opened from main program and can be opened multiple times and refreshes data once a second
+Change "Order horses by name" to "Order horses alphabetically"
+Buisness name stuff
+ASCII art, upside down horse shoe
+Add pop ups about inputs
+Add options for color themes (Background color, text color.)
+Way to change terminal appearance 
