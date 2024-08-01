@@ -12,6 +12,7 @@ internal class UserInterface
 {
     public static bool IsHotKeysHidden { get; private set; } = false;
     public static bool IsClosing { get; private set; } = false;
+    private readonly static int _popUpDelay = 1000;
     public static void Run()
     {
         Console.CursorVisible = false;
@@ -20,9 +21,9 @@ internal class UserInterface
             Console.Clear();
 
             Data.ListBindsMain();
-
-            Console.WriteLine("Welcome to the Hoof Track!".PadLeft((Console.WindowWidth - "Welcome to the Hoof Track!".Length) / 2 + "Welcome to the Hoof Track!".Length));
-
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Welcome to the Hoof Track Legacy!".PadLeft((Console.WindowWidth - "Welcome to the Hoof Track Legacy!".Length) / 2 + "Welcome to the Hoof Track Legacy!".Length));
+            Console.ResetColor();
             Console.WriteLine("\n== Horses over 6 weeks overdue ===");
             Data.OrderHorses(3, true);
             for (int i = 0; i < Data.Horses.Count; i++)
@@ -34,7 +35,6 @@ internal class UserInterface
             }
             CatchKeyMain();
         }
-        
     }
 
     public static void CatchKeyMain()
@@ -94,54 +94,72 @@ internal class UserInterface
         {
             case ConsoleKey key when key == Data.KeyBinds["AddHorse"]:
                 Console.WriteLine("Enter the name of the horse");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 name = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (name == null)
                     break;
 
                 Console.WriteLine("Enter the rotation interval of the horse");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 rotInterval = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (rotInterval == null)
                     break;
 
-                Data.Horses.Add(new Horse(name, uint.Parse(rotInterval), DateTime.Now));    
+                Data.Horses.Add(new Horse(name, uint.Parse(rotInterval), DateTime.Now));
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(name + " added");
+                Console.ResetColor();
+                Thread.Sleep(_popUpDelay);
+                Data.SaveHorses();
                 break;
 
             case ConsoleKey key when key == Data.KeyBinds["RemoveHorse"]:
                 Console.WriteLine("Enter the ID of the horse you want to remove");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 input = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (input == null)
                     break;
                 if (uint.TryParse(input, out uint id1))
-                    {
+                {
                     Horse? horse = Data.Horses.Find(horse => horse.ID == id1);
                     if (horse != null)
                     {
                         Data.Horses.Remove(horse);
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Horse removed");
-                    } else
-                    {
-                        Console.WriteLine("Horse not found");
-                        Thread.Sleep(1000);
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                        Data.SaveHorses();
                     }
-                } else
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Horse not found");
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                    }
+                }
+                else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid ID");
-                    Thread.Sleep(1000);
+                    Console.ResetColor();
+                    Thread.Sleep(_popUpDelay);
                 }
                 break;
 
             case ConsoleKey key when key == Data.KeyBinds["ResetToday"]:
                 Console.WriteLine("Enter the ID of the horse you want to reset");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 input = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (input == null)
                     break;
                 if (uint.TryParse(input, out uint id2))
@@ -150,23 +168,35 @@ internal class UserInterface
                     if (horse != null)
                     {
                         horse.Reset(DateTime.Now);
-                    } else
-                    {
-                        Console.WriteLine("Horse not found");
-                        Thread.Sleep(1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{horse.Name} reset");
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                        Data.SaveHorses();
                     }
-                } else
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Horse not found");
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                    }
+                }
+                else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid ID");
-                    Thread.Sleep(1000);
+                    Console.ResetColor();
+                    Thread.Sleep(_popUpDelay);
                 }
                 break;
 
             case ConsoleKey key when key == Data.KeyBinds["ResetCustom"]:
                 Console.WriteLine("Enter the ID of the horse you want to reset");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 input = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (input == null)
                     break;
                 if (uint.TryParse(input, out uint id3))
@@ -175,66 +205,88 @@ internal class UserInterface
                     if (horse != null)
                     {
                         Console.WriteLine("Enter the date you shoed the horse (MM/DD/YYYY)");
-                        Console.CursorVisible = true;
+                        ToggleCursorVisibility(true);
                         Console.Write("> ");
                         input = Console.ReadLine();
+                        ToggleCursorVisibility(false);
                         if (input == null)
                             break;
                         horse.Reset(DateTime.Parse(input));
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{horse.Name} reset to custom date: {DateTime.Parse(input).ToLongDateString()}");
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                        Data.SaveHorses();
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Horse not found");
-                        Thread.Sleep(1000);
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid ID");
-                    Thread.Sleep(1000);
+                    Console.ResetColor();
+                    Thread.Sleep(_popUpDelay);
                 }
                 break;
 
             case ConsoleKey key when key == Data.KeyBinds["EditHorse"]:
                 Console.WriteLine("Enter the ID of the horse you want to edit");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 input = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (input == null)
                     break;
                 if (uint.TryParse(input, out uint id4))
-                    {
+                {
                     Horse? horse = Data.Horses.Find(horse => horse.ID == id4);
                     if (horse != null)
                     {
                         Console.WriteLine("Enter the new name of the horse");
-                        Console.CursorVisible = true;
+                        ToggleCursorVisibility(true);
                         Console.Write("> ");
                         name = Console.ReadLine();
-                        if (name == null)
-                            break;
+                        ToggleCursorVisibility(false);
+                        if (name == null || name == "")
+                            name = horse.Name;
 
                         Console.WriteLine("Enter the new rotation interval of the horse");
-                        Console.CursorVisible = true;
+                        ToggleCursorVisibility(true);
                         Console.Write("> ");
                         rotInterval = Console.ReadLine();
+                        ToggleCursorVisibility(false);
                         if (rotInterval == null)
-                            break;
+                            rotInterval = horse.RotationInterval.ToString();
 
                         horse.Name = name;
                         horse.RotationInterval = uint.Parse(rotInterval);
                         horse.Update();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"{horse.Name} information updated");
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
+                        Data.SaveHorses();
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Horse not found");
-                        Thread.Sleep(1000);
+                        Console.ResetColor();
+                        Thread.Sleep(_popUpDelay);
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid ID");
-                    Thread.Sleep(1000);
+                    Console.ResetColor();
+                    Thread.Sleep(_popUpDelay);
                 }
                 break;
 
@@ -256,7 +308,7 @@ internal class UserInterface
             Data.OrderHorses(1, false);
             for (int i = 0; i < Data.Horses.Count; i++)
             {
-                Console.WriteLine($"({Data.Horses[i].ID}) {Data.Horses[i].Name} {Data.Horses[i].WeeksOverdue} weeks");
+                Console.WriteLine($"({Data.Horses[i].ID}) {Data.Horses[i].Name} {Data.Horses[i].WeeksSinceLastShoe} weeks - {Data.Horses[i].LastShoeDate.Date.ToShortDateString()}");
             }
 
             Console.WriteLine($"\n{Data.KeyBinds["OrderName"]} - Order the horses by name");
@@ -266,12 +318,10 @@ internal class UserInterface
             Console.WriteLine($"{Data.KeyBinds["Back"]} - Go back");
             isRunning = CatchKeyMasterList();
         }
-        
     }
 
     public static bool CatchKeyMasterList()
     {
-
         ConsoleKey keyPress = Console.ReadKey().Key;
         switch (keyPress)
         {
@@ -308,11 +358,11 @@ internal class UserInterface
         {
             Console.Clear();
             Console.WriteLine("\n=== Options ===");
-            
+
             Console.WriteLine("1 - General Settings");
             Console.WriteLine("2 - Key Binds");
             Console.WriteLine("\nEscape - Go back");
-            
+
             ConsoleKey keyPress = Console.ReadKey().Key;
             switch (keyPress)
             {
@@ -345,13 +395,14 @@ internal class UserInterface
         {
             case ConsoleKey key when key == ConsoleKey.D1:
                 Console.WriteLine("Enter the minimum overdue weeks to display");
-                Console.CursorVisible = true;
+                ToggleCursorVisibility(true);
                 Console.Write("> ");
                 string? input = Console.ReadLine();
+                ToggleCursorVisibility(false);
                 if (input == null)
                     break;
                 if (int.TryParse(input, out int weeks))
-                    {
+                {
                     Data.minimumOverDueMainMenu = weeks;
                 }
                 break;
@@ -376,10 +427,10 @@ internal class UserInterface
         Console.WriteLine("Type \"back\" to leave this page");
 
         Console.WriteLine("Enter the number of the key you want to change or type back to exit this page");
-        Console.CursorVisible = true;
+        ToggleCursorVisibility(true);
         Console.Write("> ");
         string? input = Console.ReadLine();
-        Console.CursorVisible = false;
+        ToggleCursorVisibility(false);
         if (input == null)
             return;
         if (input.ToLower() == "back")
@@ -388,11 +439,16 @@ internal class UserInterface
         {
             Console.WriteLine("Press the new key");
             Console.CursorVisible = false;
-            
+
             ConsoleKeyInfo key = Console.ReadKey();
             var keyValuePair = Data.KeyBinds.ToList()[index];
             string dictKey = keyValuePair.Key;
             Data.KeyBinds[dictKey] = key.Key;
         }
+    }
+
+    private static void ToggleCursorVisibility(bool isVisible)
+    {
+        Console.CursorVisible = isVisible;
     }
 }

@@ -51,6 +51,7 @@ internal static class Data
         Console.WriteLine("\nExiting...");
     }
 
+
     private static void LoadHorses()
     {
         using StreamReader reader = new("./Data/Horses.txt");
@@ -101,15 +102,13 @@ internal static class Data
         reader.Close();
     }
 
-    private static void SaveHorses()
+    public static void SaveHorses()
     {
         using StreamWriter writer = new("./Data/Horses.txt");
-        foreach (Horse horse in Horses)
-        {
-            writer.WriteLine($"{horse.Name},{horse.LastShoeDate},{horse.RotationInterval}");
-            Console.WriteLine($"Saved Horse: {horse.Name}");
-        }
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("Horses Saved");
+        Console.ResetColor();
+        Thread.Sleep(1000);
         writer.Close();
     }
 
