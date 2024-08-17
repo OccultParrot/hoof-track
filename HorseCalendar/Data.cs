@@ -11,6 +11,7 @@ namespace HorseCalendar;
 internal static class Data
 {
     public static List<Horse> Horses = [];
+    public static List<string> HorseNames = [];
     public static Dictionary<string, ConsoleKey> KeyBinds = [];
     public static int minimumOverDueMainMenu = 6;
 
@@ -46,7 +47,6 @@ internal static class Data
     public static void Exit()
     {
         Console.Clear();
-        SaveHorses();
         SaveBinds();
         Console.WriteLine("\nExiting...");
     }
@@ -54,6 +54,7 @@ internal static class Data
 
     private static void LoadHorses()
     {
+        HorseNames.Clear();
         using StreamReader reader = new("./Data/Horses.txt");
         string[] lines = reader.ReadToEnd().Split('\n');
         // If there is no horses in the file, then don't bother trying to load them
@@ -78,7 +79,8 @@ internal static class Data
                 string name = parts[0];
                 DateTime lastShoe = DateTime.Parse(parts[1]);
                 uint rotationInterval = uint.Parse(parts[2]);
-                Horse horse = new(name, rotationInterval, lastShoe);
+                bool isTrim = bool.Parse(parts[3]);
+                Horse horse = new(name, rotationInterval, lastShoe, isTrim);
 
                 try
                 {
@@ -98,13 +100,28 @@ internal static class Data
                 continue;
             }
         }
+
+        foreach (Horse horse in Horses)
+        {
+            HorseNames.Add(horse.Name);
+        }
+
         Console.WriteLine("Horses Loaded");
         reader.Close();
     }
 
     public static void SaveHorses()
     {
+        HorseNames.Clear();
         using StreamWriter writer = new("./Data/Horses.txt");
+        foreach (Horse horse in Horses)
+        {
+            writer.WriteLine($"{horse.Name},{horse.LastShoeDate},{horse.RotationInterval}, {horse.IsTrim}");
+        }
+        foreach (Horse horse in Horses)
+        {
+            HorseNames.Add(horse.Name);
+        }
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("Horses Saved");
         Console.ResetColor();
@@ -112,9 +129,9 @@ internal static class Data
         writer.Close();
     }
 
-    public static void AddHorse(string name, uint rotationInterval, DateTime lastShoe)
+    public static void AddHorse(string? name, uint rotationInterval, DateTime lastShoe, bool isTrim)
     {
-        Horse horse = new(name, rotationInterval, lastShoe);
+        Horse horse = new(name, rotationInterval, lastShoe, isTrim);
         Horses.Add(horse);
         Console.WriteLine($"Added Horse: {name}");
         UpdateHorses();
@@ -189,7 +206,7 @@ internal static class Data
         {
             return;
         }
-        Console.WriteLine($"Horse Data Menu ({KeyBinds["HorseManipulation"]}), Master List ({KeyBinds["MasterList"]}), Due Date Calculator ({KeyBinds["DueDateCalculator"]}), Settings ({KeyBinds["OpenSettings"]}), Exit ({KeyBinds["Exit"]}), Hide ({KeyBinds["HideHotKeys"]})");
+        Console.WriteLine($"Horse Scheduling Options ({KeyBinds["HorseManipulation"]}), Master List ({KeyBinds["MasterList"]}), Due Date Calculator ({KeyBinds["DueDateCalculator"]}), Settings ({KeyBinds["OpenSettings"]}), Exit ({KeyBinds["Exit"]}), Hide ({KeyBinds["HideHotKeys"]})");
     }
     public static void LoadBinds()
     {
