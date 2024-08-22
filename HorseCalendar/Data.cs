@@ -295,4 +295,9 @@ internal static class Data
     {
         //TODO: Set a keybind
     }
+
+    public static void ResetHorse(string name, DateTime date)
+    {
+        Horses.FirstOrDefault(h => h.Name == name).Reset(date);
+    }
 }

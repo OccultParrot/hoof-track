@@ -4,7 +4,7 @@ internal class Horse
 {
     public static uint _idCounter { get; private set; } = 0;
     public uint ID { get; private set; }
-    public string? Name { get; set; }
+    public string Name { get; set; }
     public int WeeksSinceLastShoe => (int)((DateTime.Now - LastShoeDate).TotalDays / 7);
     public int WeeksOverdue => Math.Max(0, WeeksSinceLastShoe - (int)RotationInterval);
     public bool IsTrim { get; set; }
@@ -13,7 +13,7 @@ internal class Horse
 
     
 
-    public Horse(string? name, uint rotationInterval, DateTime lastShoeDate, bool isTrim)
+    public Horse(string name, uint rotationInterval, DateTime lastShoeDate, bool isTrim)
     {
         Name = name;
         RotationInterval = rotationInterval;

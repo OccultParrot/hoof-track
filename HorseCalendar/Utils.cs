@@ -37,7 +37,6 @@ public static class Utils
         int selected = 0;
         while (true)
         {
-            Console.Clear();
             WriteLineCentered("Select an Option:");
             Rule();
             for (int i = 0; i < options.Length; i++)
@@ -75,6 +74,11 @@ public static class Utils
             {
                 return options[selected];
             }
+            for (int i = 0; i < options.Length + 3; i++)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+                ClearCurrentConsoleLine();
+            }
         }
     }
 
@@ -86,6 +90,7 @@ public static class Utils
     /// <returns>The input string</returns>
     public static string? AutoCompleteInput(string[] options, bool isChildInput = false)
     {
+        Console.CursorVisible = true;
         StringBuilder input = new();
 
         while (true)
@@ -96,6 +101,7 @@ public static class Utils
             if (key.Key == ConsoleKey.Enter)
             {
                 Console.WriteLine();
+                Console.CursorVisible = false;
                 return input.ToString();
             }
             // Escape
@@ -112,6 +118,7 @@ public static class Utils
                     Console.SetCursorPosition(0, Console.CursorTop - 1);
                     ClearCurrentConsoleLine();
                 }
+                Console.CursorVisible = false;
                 return null;
             }
             // Backspace
@@ -139,6 +146,7 @@ public static class Utils
                 Console.Write(key.KeyChar);
             }
         }
+        
     }
     
     /// <summary>
@@ -150,5 +158,117 @@ public static class Utils
         Console.SetCursorPosition(0, Console.CursorTop);
         Console.Write(new string(' ', Console.WindowWidth));
         Console.SetCursorPosition(0, currentLineCursor);
+    }
+
+    /// <summary>
+    /// Prompts the user to select a date using arrow keys and enter
+    /// </summary>
+    /// <returns>The date selected by the user</returns>
+    public static DateTime DateInput()
+    {
+        int selected = 0;
+        // MM/DD/YYYY
+        string[] date = new string[3];
+        int month = DateTime.Now.Month;
+        int day = DateTime.Now.Day;
+        int year = DateTime.Now.Year;
+
+        while (true)
+        {
+            if (selected == 0)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($"{month:D2}");
+                Console.ResetColor();
+                Console.Write("/");
+                Console.Write($"{day:D2}");
+                Console.Write("/");
+                Console.Write($"{year:D4}");
+            }
+            else if (selected == 1)
+            {
+                Console.Write($"{month:D2}");
+                Console.Write("/");
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($"{day:D2}");
+                Console.ResetColor();
+                Console.Write("/");
+                Console.Write($"{year:D4}");
+            }
+            else if (selected == 2)
+            {
+                Console.Write($"{month:D2}");
+                Console.Write("/");
+                Console.Write($"{day:D2}");
+                Console.Write("/");
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($"{year:D4}");
+                Console.ResetColor();
+            }
+            
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.RightArrow)
+            {
+                if (selected < 2)
+                    selected++;
+                else
+                    selected = 0;
+            }
+            else if (key.Key == ConsoleKey.LeftArrow)
+            {
+                if (selected > 0)
+                    selected--;
+                else
+                    selected = 2;
+            }
+            else if (key.Key == ConsoleKey.UpArrow)
+            {
+                if (selected == 0)
+                {
+                    month++;
+                    if (month > 12)
+                        month = 1;
+                }
+                else if (selected == 1)
+                {
+                    day++;
+                    if (day > DateTime.DaysInMonth(year, month))
+                        day = 1;
+                }
+                else if (selected == 2)
+                {
+                    year++;
+                }
+            }
+            else if (key.Key == ConsoleKey.DownArrow)
+            {
+                if (selected == 0)
+                {
+                    month--;
+                    if (month < 1)
+                        month = 12;
+                }
+                else if (selected == 1)
+                {
+                    day--;
+                    if (day < 1)
+                        day = DateTime.DaysInMonth(year, month);
+                }
+                else if (selected == 2)
+                {
+                    year--;
+                }
+            }
+            else if (key.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                return DateTime.Parse($"{month:D2}/{day:D2}/{year:D4}");
+            }
+
+            Utils.ClearCurrentConsoleLine();
+        }
     }
 }

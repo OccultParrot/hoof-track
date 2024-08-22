@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using HorseCalendar;
 using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics;
 
 namespace HorseCalendar;
 
@@ -191,6 +192,7 @@ internal class UserInterface
 
     private static void ResetHorse()
     {
+        Console.WriteLine("");
         string choice = Utils.TabMenu(["Reset to Today", "Reset to Custom Date"]);
         if (choice == "Reset to Today")
         {
@@ -199,10 +201,21 @@ internal class UserInterface
             
             if (name == null)
                 return;
+
+            Data.ResetHorse(name, DateTime.Now);
         }
         else if (choice == "Reset to Custom Date")
         {
+            Console.WriteLine("Enter the name of the horse you want to reset");
+            string? name = Utils.AutoCompleteInput([.. Data.HorseNames], true);
+            
+            if (name == null) 
+                return;
 
+            Console.WriteLine("Enter the date you want to reset the horse to");
+            DateTime resetDate = Utils.DateInput();
+
+            Data.ResetHorse(name, resetDate);
         }
 
         Data.SaveHorses();
