@@ -1,19 +1,27 @@
 import keyboard
 from rich.console import Console
 import datetime
-import time
+# from uuid import uuid4
+# import time
 import os
 
 from src.data import Data
-from src.horse import Horse
+# from src.horse import Horse
 
 console = Console()
 
+database: Data
 
-def catch_key_main(key):
-    # Your key handling logic here
+
+def catch_key_main(event: keyboard.KeyboardEvent) -> bool:
+    key = event.name
+    # Put key logic here!
     if key == "q" or key == "esc":
         return False
+    elif key == "f1":
+        console.log("F1!!!")
+        return True
+
     return True  # Return False to exit the loop
 
 
@@ -30,11 +38,13 @@ def draw_starting_screen():
 
 
 def run(data: Data):
+    global database
+    database = data
+
     is_running = True
     draw_starting_screen()
-    input("Press Enter to continue...")
     while is_running:
         event = keyboard.read_event(suppress=True)
         if event.event_type == keyboard.KEY_DOWN:
-            is_running = catch_key_main(event.name)
+            is_running = catch_key_main(event)
             draw_starting_screen()

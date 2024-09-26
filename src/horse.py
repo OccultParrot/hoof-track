@@ -1,6 +1,7 @@
 import datetime
 
 
+
 class Horse:
     id: int
     name: str
@@ -9,8 +10,9 @@ class Horse:
     rotation_interval: int
     last_shoe_date: datetime.date
 
-    def __init__(self, name: str, age: int, is_trim: bool, rotation_interval: int, last_shoe_date: datetime.date):
+    def __init__(self, name: str, horse_id: int, age: int, is_trim: bool, rotation_interval: int, last_shoe_date: datetime.date):
         self.name = name
+        self.id = horse_id
         self.age = age
         self.is_trim = is_trim
         self.rotation_interval = rotation_interval
