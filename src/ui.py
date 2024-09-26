@@ -1,50 +1,72 @@
 import keyboard
 from rich.console import Console
 import datetime
-# from uuid import uuid4
-# import time
 import os
+from typing import Callable
 
 from src.data import Data
-# from src.horse import Horse
 
 console = Console()
 
-database: Data
+
+def add_horse():
+    console.log("Caught add horse")
+    input("Press Enter to continue...")
 
 
-def catch_key_main(event: keyboard.KeyboardEvent) -> bool:
+def remove_horse():
+    console.log("Caught remove horse")
+    input("Press Enter to continue...")
+
+
+def barn_menu():
+    console.log("Caught barn menu")
+    input("Press Enter to continue...")
+
+
+def master_list():
+    console.log("Caught master list")
+    input("Press Enter to continue...")
+
+
+def catch_key_main(event: keyboard.KeyboardEvent, database: Data) -> bool:
     key = event.name
-    # Put key logic here!
-    if key == "q" or key == "esc":
+
+    if key in ["q", "esc"]:
         return False
-    elif key == "f1":
-        console.log("F1!!!")
-        return True
 
-    return True  # Return False to exit the loop
+    key_actions: dict[str, Callable[[], None]] = {
+        database.get_key("add_horse"): add_horse,
+        database.get_key("remove_horse"): remove_horse,
+        database.get_key("barn_menu"): barn_menu,
+        database.get_key("master_list"): master_list,
+    }
+
+    if key in key_actions:
+        key_actions[key]()
+
+    return True
 
 
-def draw_starting_screen():
+def draw_starting_screen(database: Data):
     os.system('cls' if os.name == 'nt' else 'clear')
     console.print("FARRIER BUSINESS MANAGEMENT SYSTEMS", justify="center")
     console.print()
     console.rule()
     console.print()
-    console.print(f'{datetime.date.today().day}/{datetime.date.today().month}/{datetime.date.today().year}',
+    # TODO: Add day of the week
+    console.print(f'DAY OF THE WEEK HERE, {datetime.date.today().strftime("%d/%m/%Y")}', justify="center")
+    console.print(f"Horses active in rotation: {len(database.horses)}", justify="center")
+    console.print(f"Horses overdue: {sum(1 for horse in database.horses if horse.get_weeks_overdue() > 0)}",
                   justify="center")
-    console.print("Horses active in rotation: [TODO]", justify="center")
-    console.print("Horses overdue: [TODO]", justify="center")
 
 
-def run(data: Data):
-    global database
-    database = data
-
+def run(database: Data):
     is_running = True
-    draw_starting_screen()
+    draw_starting_screen(database)
+
     while is_running:
         event = keyboard.read_event(suppress=True)
         if event.event_type == keyboard.KEY_DOWN:
-            is_running = catch_key_main(event)
-            draw_starting_screen()
+            is_running = catch_key_main(event, database)
+            draw_starting_screen(database)

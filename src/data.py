@@ -15,6 +15,11 @@ def _generate_data_directory(data_folder_path: str):
         with open(data_folder_path + "horses.json", "w") as file:
             file.write("[]")
 
+        # Creating the keys.json file
+        print("Creating keys.json file...")
+        with open(data_folder_path + "keys.json", "w") as file:
+            file.write('{"add_horse": "f1", "remove_horse": "f2"}')
+
         print("Data directory created successfully!")
         time.sleep(0.5)
 
@@ -26,9 +31,11 @@ def _generate_data_directory(data_folder_path: str):
 
 class Data:
     horses: list[Horse]
+    keys: dict[str, str]
 
     def __init__(self):
         self.horses = []
+        self.keys = {}
 
     def _load_horses(self, file_path: str):
         with open(file_path, "r") as file:
@@ -40,6 +47,19 @@ class Data:
                                          horse["is_trim"],
                                          horse["rotation_interval"],
                                          horse["last_shoe_date"]))
+
+    def _load_keys(self, file_path: str):
+        with open(file_path, "r") as file:
+            self.keys = json.load(file)
+        print("Loaded keys:", self.keys)
+
+    def _save_horses(self, file_path: str):
+        with open(file_path, "w") as file:
+            file.write(self._stringify())
+
+    def _save_keys(self, file_path: str):
+        with open(file_path, "w") as file:
+            file.write(json.dumps(self.keys))
 
     def _stringify(self) -> str:
         horse_data = []
@@ -64,6 +84,7 @@ class Data:
             _generate_data_directory(data_folder_path)
 
         self._load_horses(data_folder_path + "horses.json")
+        self._load_keys(data_folder_path + "keys.json")
         print("Data loaded successfully")
         time.sleep(0.5)
 
@@ -76,3 +97,6 @@ class Data:
     def print_horses(self):
         for horse in self.horses:
             print(horse.name, horse.age, horse.is_trim, horse.rotation_interval, horse.last_shoe_date)
+
+    def get_key(self, event_name: str):
+        return self.keys.get(event_name)
