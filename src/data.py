@@ -2,6 +2,7 @@ from src.horse import Horse
 import json
 import time
 import os
+from uuid import UUID
 
 
 def _generate_data_directory(data_folder_path: str):
@@ -18,11 +19,10 @@ def _generate_data_directory(data_folder_path: str):
         # Creating the keys.json file
         print("Creating keys.json file...")
         with open(data_folder_path + "keys.json", "w") as file:
-            file.write('{"add_horse": "f1", "remove_horse": "f2"}')
+            file.write('{"add_horse": "f1", "remove_horse": "f2", "barn_menu": "f3", "master_list": "f4"}')
 
         print("Data directory created successfully!")
         time.sleep(0.5)
-
     except Exception as e:
         print("Error while creating data directory:", e)
         input("Press Enter to close application...")
@@ -42,8 +42,8 @@ class Data:
             data: [] = json.loads(file.read())
             for horse in data:
                 self.horses.append(Horse(horse["name"],
-                                         horse["id"],
-                                         horse["age"],
+                                         # Casting to the UUID class
+                                         UUID(horse["id"]),
                                          horse["is_trim"],
                                          horse["rotation_interval"],
                                          horse["last_shoe_date"]))
@@ -67,7 +67,6 @@ class Data:
             horse_data.append({
                 "name": horse.name,
                 "id": horse.id,
-                "age": horse.age,
                 "is_trim": horse.is_trim,
                 "rotation_interval": horse.rotation_interval,
                 "last_shoe_date": horse.last_shoe_date.isoformat()
@@ -91,8 +90,15 @@ class Data:
     def add_horse(self, horse: Horse):
         self.horses.append(horse)
 
-    def remove_horse(self, horse: Horse):
-        self.horses.remove(horse)
+    def remove_horse(self, horseName: str):
+        for horse in self.horses:
+            if horse.name == horseName:
+                self.horses.remove(horse)
+                break
+        print(f"No horse by the name {horseName} exists")
+
+    def get_horses_as_strings(self) -> list[str]:
+        return [horse.name for horse in self.horses]
 
     def print_horses(self):
         for horse in self.horses:
