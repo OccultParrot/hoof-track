@@ -1,3 +1,6 @@
-# HorseCalendar
-
-Use `pyinstaller main.py` to compile the python code into an executable. The executable will be in the `dist` folder.
+To build run these three commands
+```bash
+pyinstaller --add-data "dist/MasterList.exe;." HoofTrack.py -F
+pyinstaller MasterList.py -F
+pyinstaller DataTranslator.py -F
+```

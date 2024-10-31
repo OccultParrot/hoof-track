@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.horse import Horse
 import json
 import time
@@ -44,16 +46,16 @@ class Data:
                 self.horses.append(Horse(horse["name"],
                                          # Casting to the UUID class
                                          UUID(horse["id"]),
-                                         horse["is_trim"],
-                                         horse["rotation_interval"],
-                                         horse["last_shoe_date"]))
+                                         bool(horse["is_trim"]),
+                                         int(horse["rotation_interval"]),
+                                         datetime.fromisoformat(horse["last_shoe_date"]).date()))
 
     def _load_keys(self, file_path: str):
         with open(file_path, "r") as file:
             self.keys = json.load(file)
         print("Loaded keys:", self.keys)
 
-    def _save_horses(self, file_path: str):
+    def save_horses(self, file_path: str):
         with open(file_path, "w") as file:
             file.write(self._stringify())
 
@@ -66,7 +68,7 @@ class Data:
         for horse in self.horses:
             horse_data.append({
                 "name": horse.name,
-                "id": horse.id,
+                "id": str(horse.id),
                 "is_trim": horse.is_trim,
                 "rotation_interval": horse.rotation_interval,
                 "last_shoe_date": horse.last_shoe_date.isoformat()
